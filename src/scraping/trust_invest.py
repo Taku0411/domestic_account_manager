@@ -64,9 +64,8 @@ class trust_invest():
             "INSERT INTO trust_invest_data (invest_id, date, net_asset_value, gain_loss, gain_loss_percentage) values (?, ?, ?, ?, ?)", (
                 self.invest_id_, self.date_, self.net_asset_value_, self.gain_loss_, self.gain_loss_percentage_)
         )
-        logger.info("write as")
         logger.info(
-            f"INSERT INTO trust_invest_data ({self.invest_id_}, {self.date_}, {self.net_asset_value_})")
+            f"sql command -> INSERT INTO trust_invest_data ({self.invest_id_}, {self.date_}, {self.net_asset_value_})")
         self.conn.commit()
 
 

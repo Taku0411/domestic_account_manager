@@ -60,9 +60,8 @@ class cash_deposit():
             "INSERT INTO cash_deposit_data (account_id, date, balance) values (?, ?, ?)", (
                 self.account_id_, self.date_, self.value_)
         )
-        logger.info("write as")
         logger.info(
-            f"INSERT INTO cash_deposit_data ({self.account_id_}, {self.date_}, {self.value_})")
+            f"sql command -> INSERT INTO cash_deposit_data ({self.account_id_}, {self.date_}, {self.value_})")
         self.conn.commit()
 
 

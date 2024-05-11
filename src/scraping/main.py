@@ -1,6 +1,9 @@
 import time
 import tomllib
 from datetime import datetime
+
+import selenium.common.exceptions
+
 import trust_invest
 import cash_deposit
 from selenium.webdriver.common.by import By
@@ -23,7 +26,9 @@ def main():
     logger.info("scraping started")
 
     options = Options()
-    # options.add_argument("--headless")
+    options.add_argument("--headless")
+    options.add_argument(
+        "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
     options.add_experimental_option("detach", True)
 
     driver = webdriver.Chrome(options=options)
@@ -36,16 +41,29 @@ def main():
     login_actions = selenium_basics.actions(driver=driver)
     for item in login_actions_str:
         login_actions.do(item)
+    logger.info("login actions done")
+
+    # try no thank you for passkey
+    try:
+        driver.find_element(
+            by=By.XPATH, value="""/html/body/main/div/div/div[2]/div/s/ection/div/a""").click()
+    except selenium.common.exceptions.NoSuchElementException:
+        logger.info("skipped no thank you pass key")
+        pass
+    driver.find_element(
+        by=By.XPATH, value="""//*[@id="header-container"]/header/div[2]/ul/li[5]/a""").click()
 
     # update accounts
+    logger.info("update account info started")
     table = driver.find_element(
         by=By.XPATH, value="""//*[@id="account-table"]""")
-    # account_element_list = table.find_elements(by=By.TAG_NAME, value="tr")[1:]
-    # for account in account_element_list:
-    # account.find_element(by=By.NAME, value="commit").click()
+    account_element_list = table.find_elements(by=By.TAG_NAME, value="tr")[1:]
+    for account in account_element_list:
+        account.find_element(by=By.NAME, value="commit").click()
     # time.sleep(60)
 
     # extract cash_deposit
+    logger.info("extract account info started")
     driver.find_element(
         by=By.XPATH, value="""//*[@id="header-container"]/header/div[2]/ul/li[4]/a""").click()
 
@@ -66,8 +84,9 @@ def main():
         sql.write()
 
     # extract trust investment
+    logger.info("extract trust investment started")
     trust_invest_table = driver.find_element(
-        by=By.XPATH, value="""/html/body/div[1]/div[3]/div/div/div[2]/section[2]/table""")
+        by=By.XPATH, value="""//*[@id="portfolio_det_mf"]/table/tbody""")
     trust_invest_list = trust_invest_table.find_elements(
         by=By.TAG_NAME, value="tr")
     for account in trust_invest_list:
