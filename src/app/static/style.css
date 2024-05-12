@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap');
+
+.font-family-karla {
+  font-family: karla;
+}
+
+.font-familiy-sans {
+  font-family: "Noto Sans JP", sans-serif;
+  font-optical-sizing: auto;
+}
+
+.bg-sidebar {
+  background: #3d68ff;
+}
+
+.cta-btn {
+  color: #3d68ff;
+}
+
+.upgrade-btn {
+  background: #1947ee;
+}
+
+.upgrade-btn:hover {
+  background: #0038fd;
+}
+
+.active-nav-link {
+  background: #1947ee;
+}
+
+.nav-item:hover {
+  background: #1947ee;
+}
+
+.account-link:hover {
+  background: #3d68ff;
+}

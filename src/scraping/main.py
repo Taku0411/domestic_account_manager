@@ -71,6 +71,8 @@ def main():
         by=By.XPATH, value="""//*[@id="portfolio_det_depo"]/section/table/tbody""")
     cash_deposit_list = cash_deposit_table.find_elements(
         by=By.TAG_NAME, value="tr")
+
+    datetime_now = datetime.now()
     for account in cash_deposit_list:
         logger.info(account.text)
         column = account.find_elements(by=By.TAG_NAME, value="td")
@@ -79,7 +81,7 @@ def main():
         bank_name = column[2].text
 
         sql = cash_deposit.cash_deposit(sqlite3_path)
-        sql.set(account_type, bank_name, datetime.now(), balance)
+        sql.set(account_type, bank_name, datetime_now, balance)
         sql.determine_account_id()
         sql.write()
 
@@ -99,7 +101,7 @@ def main():
         bank_name = column[8].text
 
         sql = trust_invest.trust_invest(sqlite3_path)
-        sql.set(invest_name, bank_name, datetime.now(),
+        sql.set(invest_name, bank_name, datetime_now,
                 net_asset_value, gain_loss, gain_loss_percentage)
         sql.determine_invest_id()
         sql.write()
