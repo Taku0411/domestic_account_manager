@@ -43,7 +43,7 @@ async function draw() {
       datasets: [
         // cash_deposit
         {
-          fill: "origin",
+          fill: false,
           label: "預金",
           data: data2["value"]["cash_deposit"],
           lineTransition: 0,
@@ -52,7 +52,7 @@ async function draw() {
         },
         // trust_invest
         {
-          fill: "0",
+          fill: false,
           label: "投資信託",
           data: data2["value"]["trust_invest"],
           lineTransition: 0,
