@@ -1,3 +1,4 @@
+import sys
 import time
 import tomllib
 from datetime import datetime
@@ -6,6 +7,8 @@ import selenium.common.exceptions
 
 import trust_invest
 import cash_deposit
+import send_line_notify
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
@@ -37,10 +40,12 @@ def main():
         data = tomllib.load(f)
 
     # login
+    logger.info("login startted")
     login_actions_str = data["login_actions"]
     login_actions = selenium_basics.actions(driver=driver)
     for item in login_actions_str:
         login_actions.do(item)
+        logger.info(f"{item}")
     logger.info("login actions done")
 
     # try no thank you for passkey
@@ -60,7 +65,36 @@ def main():
     account_element_list = table.find_elements(by=By.TAG_NAME, value="tr")[1:]
     for account in account_element_list:
         account.find_element(by=By.NAME, value="commit").click()
-    # time.sleep(60)
+
+    # wait for updating
+    sleep_sec = 120
+    logger.info(f"sleeping for {sleep_sec}sec")
+    time.sleep(sleep_sec)
+
+    # check if update successfull
+    account_element_list = driver.find_element(
+        by=By.XPATH,  value="""//*[@id="account-table"]""").find_elements(by=By.TAG_NAME, value="tr")[1:]
+
+    error_counter = 0
+    for account in account_element_list:
+        try:
+            status = account.find_elements(
+                by=By.TAG_NAME, value="td")[3]
+            if status.text != "正常":
+                logger.info("plused")
+                error_counter += 1
+        except selenium.common.exceptions.NoSuchElementException:
+            logger.info("element not found")
+            error_counter += 1
+
+    # notify line
+    now = datetime.now()
+    msg = f"更新完了\n({now})"
+    if error_counter != 0:
+        msg = f"更新失敗！エラーがあります．詳しくは\nhttps://moneyforward.com/accounts\n({now})"
+    send_line_notify.send_line(msg)
+    if error_counter != 0:
+        sys.exit(0)
 
     # extract cash_deposit
     logger.info("extract account info started")
