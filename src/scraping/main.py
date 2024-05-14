@@ -2,6 +2,7 @@ import sys
 import time
 import tomllib
 from datetime import datetime
+import shutil
 
 import selenium.common.exceptions
 
@@ -139,6 +140,11 @@ def main():
                 net_asset_value, gain_loss, gain_loss_percentage)
         sql.determine_invest_id()
         sql.write()
+
+    # for back up, copy file
+    target = sqlite3_path.parent / \
+        str(datetime.now().strftime("%Y%m%d") + ".sqlite3")
+    shutil.copy(sqlite3_path, target)
 
 
 if __name__ == "__main__":
