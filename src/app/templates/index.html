@@ -18,7 +18,7 @@
       <a href="/index.html" class="text-white text-3xl font-semibold uppercase hover:text-gray-300"> AssetIQ </a>
       <button
         class="w-full bg-white cta-btn font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center">
-        <i class="fas fa-plus mr-3"></i> New Report
+        <i class="fa-solid fa-rotate mr-3"></i> 更新
       </button>
     </div>
     <nav class="text-white text-base font-semibold font-familiy-sans pt-3">
@@ -38,18 +38,10 @@
   </aside>
 
   <div class="w-full flex flex-col h-screen overflow-y-hidden">
-    <!--desktop header -->
-    <header class="w-full items-center bg-white py-2 px-6 hidden sm:flex">
-      <button
-        class="w-1/6 h-8 bg-green-50 cta-btn font-semibold my-1 rounded shadow-lg hover:shadowl hover:bg-gray-300 flex items-center justify-center">
-        <i class="fa-solid fa-rotate"></i>
-        更新
-      </button>
-    </header>
     <!-- Mobile Header & Nav -->
     <header x-data="{ isOpen: false }" class="w-full bg-sidebar py-5 px-6 sm:hidden">
       <div class="flex items-center justify-between">
-        <a href="index.html" class="text-white text-3xl font-semibold uppercase hover:text-gray-300">Admin</a>
+        <a href="index.html" class="text-white text-3xl font-semibold uppercase hover:text-gray-300">ASSETIQ</a>
         <button @click="isOpen = !isOpen" class="text-white text-3xl focus:outline-none">
           <i x-show="!isOpen" class="fas fa-bars"></i>
           <i x-show="isOpen" class="fas fa-times"></i>
@@ -61,11 +53,11 @@
           <i class="fa-solid fa-chart-simple mr-3"></i>
           ダッシュボード
         </a>
-        <a href="index.html" class="flex items-center text-white opacity-75 hover:opacity-100 py-2 pl-4 nav-item">
+        <a href="/cash_deposit.html" class="flex items-center text-white opacity-75 hover:opacity-100 py-2 pl-4 nav-item">
           <i class="fa-solid fa-cash-register mr-3"></i>
           預金
         </a>
-        <a href="index.html" class="flex items-center text-white opacity-75 hover:opacity-100 py-2 pl-4 nav-item">
+        <a href="trust_invest.html" class="flex items-center text-white opacity-75 hover:opacity-100 py-2 pl-4 nav-item">
           <i class="fa-solid fa-magnifying-glass-chart mr-3"></i>
           投資信託
         </a>
@@ -74,7 +66,7 @@
     <!-- chart -->
     <div class="w-full overflow-x-hidden border-t flex flex-col">
       <main class="w-full flex-grow p-6">
-        <h1 class="text-3xl tex-black pb-6 font-familiy-sans">全財産</h1>
+        <h1 class="text-3xl tex-black font-familiy-sans">全財産</h1>
 
         <!-- 全資産 -->
         <div class="flex flex-wrap mt-6">
@@ -83,7 +75,7 @@
               <i class="fas fa-check mr-3"></i> ポートフォリオ
             </p>
             <div class="p-6 bg-white">
-              <canvas id="chartTotalPortfolio" width="400" height="200"></canvas>
+              <canvas id="chartTotalPortfolio" width="400" height="170"></canvas>
             </div>
           </div>
           <div class="w-full lg:w-1/2 pl-0 lg:pl-2 mt-12 lg:mt-0">
@@ -91,7 +83,7 @@
               <i class="fas fa-check mr-3"></i> 総資産推移
             </p>
             <div class="p-6 bg-white">
-              <canvas id="chartTotalTimeSeries" width="400" height="200"></canvas>
+              <canvas id="chartTotalTimeSeries" width="400" height="170"></canvas>
             </div>
           </div>
         </div>
@@ -100,18 +92,18 @@
         <div class="flex flex-wrap mt-6">
           <div class="w-full lg:w-1/2 pr-0 lg:pr-2">
             <p class="text-xl pb-3 flex items-center">
-              <i class="fas fa-plus mr-3"></i> Monthly Reports
+              <i class="fas fa-cash-register mr-3"></i> 預金
             </p>
             <div class="p-6 bg-white">
-              <canvas id="chartCashBank" width="400" height="200"></canvas>
+              <canvas id="chartTotalCashDeposit" width="400" height="170"></canvas>
             </div>
           </div>
           <div class="w-full lg:w-1/2 pl-0 lg:pl-2 mt-12 lg:mt-0">
             <p class="text-xl pb-3 flex items-center">
-              <i class="fas fa-check mr-3"></i> Resolved Reports
+              <i class="fas fa-magnifying-glass-chart mr-3"></i> 投資信託
             </p>
             <div class="p-6 bg-white">
-              <canvas id="chartTwo" width="400" height="200"></canvas>
+              <canvas id="chartTotalTrustInvest" width="400" height="170"></canvas>
             </div>
           </div>
         </div>
@@ -122,7 +114,14 @@
   <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
   <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/c0c602186b.js" crossorigin="anonymous"></script>
+  <!-- ChartJS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+  <!-- ChartJS datatime formatter -->
+  <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
+  <!-- ChartJS pie formatter -->
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0 "></script>
+  <!-- my script -->
   <script src="/static/index.js"></script>
 
 </body>

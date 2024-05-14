@@ -38,18 +38,10 @@
   </aside>
 
   <div class="w-full flex flex-col h-screen overflow-y-hidden">
-    <!--desktop header -->
-    <header class="w-full items-center bg-white py-2 px-6 hidden sm:flex">
-      <button
-        class="w-1/6 h-8 bg-green-50 cta-btn font-semibold my-1 rounded shadow-lg hover:shadowl hover:bg-gray-300 flex items-center justify-center">
-        <i class="fa-solid fa-rotate"></i>
-        更新
-      </button>
-    </header>
     <!-- Mobile Header & Nav -->
     <header x-data="{ isOpen: false }" class="w-full bg-sidebar py-5 px-6 sm:hidden">
       <div class="flex items-center justify-between">
-        <a href="index.html" class="text-white text-3xl font-semibold uppercase hover:text-gray-300">Admin</a>
+        <a href="index.html" class="text-white text-3xl font-semibold uppercase hover:text-gray-300">ASSETIQ</a>
         <button @click="isOpen = !isOpen" class="text-white text-3xl focus:outline-none">
           <i x-show="!isOpen" class="fas fa-bars"></i>
           <i x-show="isOpen" class="fas fa-times"></i>
@@ -75,7 +67,7 @@
     <!-- chart -->
     <div class="w-full overflow-x-hidden border-t flex flex-col">
       <main class="w-full flex-grow p-6">
-        <h1 class="text-3xl tex-black pb-6 font-familiy-sans">全財産</h1>
+        <h1 class="text-3xl tex-black font-familiy-sans">全財産</h1>
 
         <!-- 全資産 -->
         <div class="flex flex-wrap mt-6">

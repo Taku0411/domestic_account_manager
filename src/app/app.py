@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify
 
 from pathlib import Path
 import sqlite3
+import datetime
 
 from logging import getLogger, DEBUG
 import logging
@@ -14,7 +15,6 @@ sqlite3_path = Path(__file__).parent.parent.parent / "data" / "data.sqlite3"
 
 
 app = Flask(__name__)
-# app.json.ensure_ascii = False
 
 
 @app.route("/")
@@ -22,12 +22,16 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
+
 @app.route("/cash_deposit.html")
 def cash_deposit():
     return render_template("cash_deposit.html")
+
+
 @app.route("/trust_invest.html")
 def trust_invest():
     return render_template("trust_invest.html")
+
 
 @app.route("/TotalPortfolio")
 def get_portfolio():
@@ -37,14 +41,17 @@ def get_portfolio():
     conn = sqlite3.connect(sqlite3_path)
     cursor = conn.cursor()
     cursor.execute("SELECT MAX(date) from cash_deposit_data;")
-    cursor.execute("SELECT SUM(balance) FROM cash_deposit_data WHERE date = ?;", cursor.fetchall()[0])
+    cursor.execute(
+        "SELECT SUM(balance) FROM cash_deposit_data WHERE date = ?;", cursor.fetchall()[0])
     result["value"].append(cursor.fetchone()[0])
 
     cursor.execute("SELECT MAX(date) from trust_invest_data;")
-    cursor.execute("SELECT SUM(net_asset_value) from trust_invest_data WHERE date = ?", cursor.fetchall()[0])
+    cursor.execute(
+        "SELECT SUM(net_asset_value) from trust_invest_data WHERE date = ?", cursor.fetchall()[0])
     result["value"].append(cursor.fetchone())
 
     return jsonify(result)
+
 
 @app.route("/TotalTimeSeries")
 def get_total():
@@ -57,16 +64,26 @@ def get_total():
     cursor.execute("SELECT DISTINCT date FROM cash_deposit_data;")
     result["date"] = [item[0] for item in cursor.fetchall()]
 
+    num = len(result["date"])
+    result["value"]["total"] = [0 for i in range(num)]
+    print(result["value"]["total"])
+
     # cash_deposit
     cursor.execute("SELECT SUM(balance) FROM cash_deposit_data GROUP BY date;")
     result["value"]["cash_deposit"] = [item[0] for item in cursor.fetchall()]
+    for i in range(num):
+        result["value"]["total"][i] += result["value"]["cash_deposit"][i]
 
     # trust_invest
-    cursor.execute("SELECT SUM(net_asset_value) FROM trust_invest_data GROUP BY date;")
+    cursor.execute(
+        "SELECT SUM(net_asset_value) FROM trust_invest_data GROUP BY date;")
     result["value"]["trust_invest"] = [item[0] for item in cursor.fetchall()]
+    for i in range(num):
+        result["value"]["total"][i] += result["value"]["trust_invest"][i]
     print(result)
 
     return jsonify(result)
+
 
 @app.route("/cash_deposit")
 def get_cash_deposit():
