@@ -56,6 +56,7 @@ def main():
     except selenium.common.exceptions.NoSuchElementException:
         logger.info("skipped no thank you pass key")
         pass
+    time.sleep(1)
     driver.find_element(
         by=By.XPATH, value="""//*[@id="header-container"]/header/div[2]/ul/li[5]/a""").click()
 
