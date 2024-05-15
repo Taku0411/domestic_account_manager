@@ -67,46 +67,21 @@
     <!-- chart -->
     <div class="w-full overflow-x-hidden border-t flex flex-col">
       <main class="w-full flex-grow p-6">
-        <h1 class="text-3xl tex-black font-familiy-sans">全財産</h1>
-
+        <h1 class="text-3xl tex-black font-familiy-sans">投資信託</h1>
         <!-- 全資産 -->
         <div class="flex flex-wrap mt-6">
-          <div class="w-full lg:w-1/2 pr-0 lg:pr-2">
-            <p class="text-xl pb-3 flex items-center">
-              <i class="fas fa-check mr-3"></i> ポートフォリオ
+          <div class="w-full pl-0 lg:pl-2 mt-12 lg:mt-0 items-center">
+            <p class="text-xl pb-3 max-h-10 flex items-center">
+              <i class="fas fa-check mr-3"></i> 総計データ
             </p>
             <div class="p-6 bg-white">
-              <canvas id="chartTotalPortfolio" width="400" height="200"></canvas>
-            </div>
-          </div>
-          <div class="w-full lg:w-1/2 pl-0 lg:pl-2 mt-12 lg:mt-0">
-            <p class="text-xl pb-3 flex items-center">
-              <i class="fas fa-check mr-3"></i> 総資産推移
-            </p>
-            <div class="p-6 bg-white">
-              <canvas id="chartTotalTimeSeries" width="400" height="200"></canvas>
+              <canvas id="chartTotalTimeSeries" width="400" height="300"></canvas>
             </div>
           </div>
         </div>
 
         <!-- 各セグメント -->
-        <div class="flex flex-wrap mt-6">
-          <div class="w-full lg:w-1/2 pr-0 lg:pr-2">
-            <p class="text-xl pb-3 flex items-center">
-              <i class="fas fa-plus mr-3"></i> Monthly Reports
-            </p>
-            <div class="p-6 bg-white">
-              <canvas id="chartCashBank" width="400" height="200"></canvas>
-            </div>
-          </div>
-          <div class="w-full lg:w-1/2 pl-0 lg:pl-2 mt-12 lg:mt-0">
-            <p class="text-xl pb-3 flex items-center">
-              <i class="fas fa-check mr-3"></i> Resolved Reports
-            </p>
-            <div class="p-6 bg-white">
-              <canvas id="chartTwo" width="400" height="200"></canvas>
-            </div>
-          </div>
+        <div id="segment" , class="flex flex-wrap mt-6">
         </div>
       </main>
     </div>
@@ -115,8 +90,16 @@
   <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
   <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/c0c602186b.js" crossorigin="anonymous"></script>
+  <!-- ChartJS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+  <!-- ChartJS datatime formatter -->
+  <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
+  <!-- ChartJS pie formatter -->
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0 "></script>
+  <!-- my script -->
   <script src="/static/index.js"></script>
+  <script>draw_trust_invest()</script>
 
 </body>
 

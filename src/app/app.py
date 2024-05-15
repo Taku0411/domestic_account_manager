@@ -2,7 +2,6 @@ from flask import Flask, render_template, jsonify
 
 from pathlib import Path
 import sqlite3
-import datetime
 
 from logging import getLogger, DEBUG
 import logging
@@ -94,12 +93,12 @@ def get_cash_deposit():
     cash_deposit_list = cursor.fetchall()
 
     result["ndata"] = len(cash_deposit_list)
-    result["total"] = []
+    result["date"] = []
 
     cursor.execute(
         "SELECT date, SUM(balance) FROM cash_deposit_data GROUP BY date;")
     for i in cursor.fetchall():
-        result["total"].append([i[0], i[1]])
+        result["date"].append(i[0])
 
     for account in cash_deposit_list:
         print(account)
@@ -113,24 +112,31 @@ def get_cash_deposit():
         result[f"{account_id}"]["account_name"] = account_name
         result[f"{account_id}"]["data"] = []
         for i in cursor.fetchall():
-            result[f"{account_id}"]["data"].append([[i[1], i[2]]])
+            result[f"{account_id}"]["data"].append(i[2])
 
     return jsonify(result)
 
 
-@app.route("/trust_invest")
+@ app.route("/trust_invest")
 def get_trust_invest():
     result = {}
     conn = sqlite3.connect(sqlite3_path)
     cursor = conn.cursor()
+
+    # get number of data
     cursor.execute("SELECT * FROM trust_invest_account;")
     trust_invest_list = cursor.fetchall()
-
     result["ndata"] = len(trust_invest_list)
-    result["total"] = []
 
+    result["total"] = {}
+    result["total"]["invested_amount"] = []
+    result["total"]["net_asset_value"] = []
+    result["total"]["gain_loss"] = []
+    result["total"]["gain_loss_percentage"] = []
+    result["date"] = []
     cursor.execute("SELECT DISTINCT date FROM trust_invest_data;")
     for i in cursor.fetchall():
+        result["date"].append(i[0])
         print(i)
         cursor.execute("SELECT * FROM trust_invest_data WHERE date = ?;", i)
 
@@ -139,10 +145,12 @@ def get_trust_invest():
         for j in cursor.fetchall():
             net_asset_value += j[2]
             gain_loss += j[3]
-        gain_loss_percentage = float(
-            net_asset_value + gain_loss) * 100 / gain_loss
-        result["total"].append(
-            [i[0], net_asset_value, gain_loss, gain_loss_percentage])
+        invested_amount = net_asset_value - gain_loss
+        gain_loss_percentage = float(gain_loss) * 100 / invested_amount
+        result["total"]["invested_amount"].append(invested_amount)
+        result["total"]["net_asset_value"].append(net_asset_value)
+        result["total"]["gain_loss"].append(gain_loss)
+        result["total"]["gain_loss_percentage"].append(gain_loss_percentage)
 
     for account in trust_invest_list:
         print(account)
@@ -154,9 +162,17 @@ def get_trust_invest():
         result[f"{invest_id}"] = {}
         result[f"{invest_id}"]["invest_name"] = invest_name
         result[f"{invest_id}"]["bank_name"] = bank_name
-        result[f"{invest_id}"]["data"] = []
+        result[f"{invest_id}"]["data"] = {}
+        result[f"{invest_id}"]["data"]["invested_amount"] = []
+        result[f"{invest_id}"]["data"]["net_asset_value"] = []
+        result[f"{invest_id}"]["data"]["gain_loss"] = []
+        result[f"{invest_id}"]["data"]["gain_loss_percentage"] = []
         for i in cursor.fetchall():
-            result[f"{invest_id}"]["data"].append([[i[1], i[2], i[3], i[4]]])
+            amount = i[2] - i[3]
+            result[f"{invest_id}"]["data"]["invested_amount"].append(amount)
+            result[f"{invest_id}"]["data"]["net_asset_value"].append(i[2])
+            result[f"{invest_id}"]["data"]["gain_loss"].append(i[3])
+            result[f"{invest_id}"]["data"]["gain_loss_percentage"].append(i[4])
 
     return jsonify(result)
 
