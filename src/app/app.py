@@ -1,8 +1,5 @@
+from scraping import main
 from flask import Flask, render_template, jsonify
-
-import time
-
-import scraping
 
 from pathlib import Path
 import sqlite3
@@ -180,14 +177,15 @@ def get_trust_invest():
     return jsonify(result)
 
 
-@app.route("/update", methods = ["POST"])
+@app.route("/update", methods=["POST"])
 def update():
     try:
+        main("production")
         logger.info("update start")
-        main.main()
-        return jsonify(status = "success")
+        return jsonify(status="success")
     except Exception as e:
-        return jsonify(status = "failure", error=str(e))
+        return jsonify(status="failure", error=str(e))
+
 
 if __name__ == "__main__":
     app.run(debug=True)

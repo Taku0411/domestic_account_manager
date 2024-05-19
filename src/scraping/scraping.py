@@ -22,11 +22,12 @@ logging.basicConfig(
 logger = getLogger(__name__)
 logger.setLevel(DEBUG)
 
+root_path = Path(__file__).parent.parent.parent
+toml_path = root_path / "src" / "scraping" / "data.toml"
+sqlite3_path = root_path / "data" / "data.sqlite3"
 
-sqlite3_path = Path(__file__).parent.parent.parent / "data" / "data.sqlite3"
 
-
-def main():
+def main(arg):
     logger.info("scraping started")
 
     options = Options()
@@ -36,12 +37,13 @@ def main():
     options.add_experimental_option("detach", True)
 
     service = webdriver.ChromeService()
-    if len(sys.argv) != 1 and sys.argv[1] == "--production":
-        service = webdriver.ChromeService(executable_path="/usr/bin/chromedriver")
-    
+    if (len(sys.argv) != 1 and sys.argv[1] == "--production") or arg == "production":
+        service = webdriver.ChromeService(
+            executable_path="/usr/bin/chromedriver")
+
     driver = webdriver.Chrome(options=options, service=service)
 
-    with open("data.toml", "rb") as f:
+    with open(toml_path, "rb") as f:
         data = tomllib.load(f)
 
     # login
