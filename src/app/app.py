@@ -2,6 +2,8 @@ from flask import Flask, render_template, jsonify
 
 import time
 
+import scraping
+
 from pathlib import Path
 import sqlite3
 
@@ -182,7 +184,7 @@ def get_trust_invest():
 def update():
     try:
         logger.info("update start")
-        time.sleep(3)
+        main.main()
         return jsonify(status = "success")
     except Exception as e:
         return jsonify(status = "failure", error=str(e))
