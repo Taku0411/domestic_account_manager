@@ -1,5 +1,7 @@
 from flask import Flask, render_template, jsonify
 
+import time
+
 from pathlib import Path
 import sqlite3
 
@@ -65,7 +67,7 @@ def get_total():
 
     num = len(result["date"])
     result["value"]["total"] = [0 for i in range(num)]
-    print(result["value"]["total"])
+    logger.info(result["value"]["total"])
 
     # cash_deposit
     cursor.execute("SELECT SUM(balance) FROM cash_deposit_data GROUP BY date;")
@@ -79,7 +81,7 @@ def get_total():
     result["value"]["trust_invest"] = [item[0] for item in cursor.fetchall()]
     for i in range(num):
         result["value"]["total"][i] += result["value"]["trust_invest"][i]
-    print(result)
+    logger.info(result)
 
     return jsonify(result)
 
@@ -101,7 +103,6 @@ def get_cash_deposit():
         result["date"].append(i[0])
 
     for account in cash_deposit_list:
-        print(account)
         account_id = account[0]
         account_type = account[1]
         account_name = account[2]
@@ -113,6 +114,7 @@ def get_cash_deposit():
         result[f"{account_id}"]["data"] = []
         for i in cursor.fetchall():
             result[f"{account_id}"]["data"].append(i[2])
+    logger.info(result)
 
     return jsonify(result)
 
@@ -137,7 +139,6 @@ def get_trust_invest():
     cursor.execute("SELECT DISTINCT date FROM trust_invest_data;")
     for i in cursor.fetchall():
         result["date"].append(i[0])
-        print(i)
         cursor.execute("SELECT * FROM trust_invest_data WHERE date = ?;", i)
 
         net_asset_value = 0
@@ -153,7 +154,6 @@ def get_trust_invest():
         result["total"]["gain_loss_percentage"].append(gain_loss_percentage)
 
     for account in trust_invest_list:
-        print(account)
         invest_id = account[0]
         invest_name = account[1]
         bank_name = account[2]
@@ -173,9 +173,19 @@ def get_trust_invest():
             result[f"{invest_id}"]["data"]["net_asset_value"].append(i[2])
             result[f"{invest_id}"]["data"]["gain_loss"].append(i[3])
             result[f"{invest_id}"]["data"]["gain_loss_percentage"].append(i[4])
+    logger.info(result)
 
     return jsonify(result)
 
+
+@app.route("/update", methods = ["POST"])
+def update():
+    try:
+        logger.info("update start")
+        time.sleep(3)
+        return jsonify(status = "success")
+    except Exception as e:
+        return jsonify(status = "failure", error=str(e))
 
 if __name__ == "__main__":
     app.run(debug=True)

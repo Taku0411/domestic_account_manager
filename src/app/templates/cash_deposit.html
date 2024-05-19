@@ -10,15 +10,18 @@
   <!-- Tailwind -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
+  <!-- update function -->
+  <script src="/static/update.js"></script>
 </head>
 
 <body class="bg-gray-100 font-family-karia flex">
   <aside class="relative bg-sidebar h-screen w-64 hidden sm:block shadow-xl">
     <div class="p-6">
       <a href="/index.html" class="text-white text-3xl font-semibold uppercase hover:text-gray-300"> AssetIQ </a>
-      <button
+      <button id="update_button" onclick="update(2)"
         class="w-full bg-white cta-btn font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center">
-        <i class="fas fa-plus mr-3"></i> New Report
+        <i class="fa-solid fa-rotate mr-3"></i>
+        <span>更新</span>
       </button>
     </div>
     <nav class="text-white text-base font-semibold font-familiy-sans pt-3">
@@ -42,10 +45,16 @@
     <header x-data="{ isOpen: false }" class="w-full bg-sidebar py-5 px-6 sm:hidden">
       <div class="flex items-center justify-between">
         <a href="index.html" class="text-white text-3xl font-semibold uppercase hover:text-gray-300">ASSETIQ</a>
-        <button @click="isOpen = !isOpen" class="text-white text-3xl focus:outline-none">
-          <i x-show="!isOpen" class="fas fa-bars"></i>
-          <i x-show="isOpen" class="fas fa-times"></i>
-        </button>
+        <div class="flex items-center">
+          <button id="update_button_mobile" onclick="update(2)" class="text-white text-3xl">
+            <i class="fas fa-rotate"></i>
+          </button>
+          <div class="mr-3"></div>
+          <button @click="isOpen = !isOpen" class="text-white text-3xl focus:outline-none">
+            <i x-show="!isOpen" class="fas fa-bars"></i>
+            <i x-show="isOpen" class="fas fa-times"></i>
+          </button>
+        </div>
       </div>
       <!-- Dropdown Nav -->
       <nav :class="isOpen ? 'flex': 'hidden'" class="flex flex-col pt-4">
@@ -68,7 +77,6 @@
     <div class="w-full overflow-x-hidden border-t flex flex-col">
       <main class="w-full flex-grow p-6">
         <h1 class="text-3xl tex-black font-familiy-sans">預金</h1>
-
         <!-- 全資産 -->
         <div class="flex flex-wrap mt-6">
           <div class="w-full pl-0 lg:pl-2 mt-12 lg:mt-0 items-center">
@@ -99,8 +107,9 @@
   <!-- ChartJS pie formatter -->
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0 "></script>
   <!-- my script -->
-  <script src="/static/index.js"></script>
-  <script>draw_cash_deposit()</script>
+  <script src="/static/utils.js"></script>
+  <script src="/static/cash_deposit.js"></script>
+  <script>draw_cash_deposit(true)</script>
 
 </body>
 
