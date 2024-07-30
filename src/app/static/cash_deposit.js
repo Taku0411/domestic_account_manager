@@ -81,12 +81,12 @@ async function draw_cash_deposit(isFirst) {
       const i_data = data[String(i)];
       const tmp = document.createElement("div");
       num = formatNumber(i_data["data"].at(-1));
-      tmp.className = "w-full lg:w-1/2 pl-0 mt-6 lg:pl-2";
-      const html = `<p class="text-xl pb-3 flex items-center">
+      tmp.className = "w-full lg:w-1/2 pl-0 mt-6 lg:pl-6 h-96";
+      const html = `<p class="text-xl pb-3 flex items-center h-1/4 lg:h-1/6">
               <i class="fas fa-magnifying-glass-chart mr-3"></i> ${i_data["account_name"]}（${i_data["account_type"]}）：${num}円 
             </p>
-            <div class="p-6 bg-white">
-              <canvas id="chartTimeSeries_${i}" width="400" height="170"></canvas> `
+            <div class="p-3 bg-white h-3/4 lg:h-5/6">
+              <canvas id="chartTimeSeries_${i}"></canvas> `
       tmp.innerHTML = html;
       container.appendChild(tmp);
 
@@ -113,6 +113,8 @@ async function draw_cash_deposit(isFirst) {
         ]
       },
       options: {
+        respons: true,
+        maintainAspectRatio: false,
         scales: {
           xAxes: [{
             type: "time",

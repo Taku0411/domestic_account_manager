@@ -27,17 +27,18 @@ toml_path = root_path / "src" / "scraping" / "data.toml"
 sqlite3_path = root_path / "data" / "data.sqlite3"
 
 
-def main(arg):
+def scraping():
     logger.info("scraping started")
 
     options = Options()
     options.add_argument("--headless")
+    #options.add_argument("--disable-search-engine-choice-screen")
     options.add_argument(
         "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
     options.add_experimental_option("detach", True)
 
     service = webdriver.ChromeService()
-    if (len(sys.argv) != 1 and sys.argv[1] == "--production") or arg == "production":
+    if (len(sys.argv) != 1 and sys.argv[1] == "--production"):
         service = webdriver.ChromeService(
             executable_path="/usr/bin/chromedriver")
 
@@ -155,4 +156,4 @@ def main(arg):
 
 
 if __name__ == "__main__":
-    main()
+    scraping()
