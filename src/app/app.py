@@ -190,7 +190,7 @@ def get_trust_invest():
 @app.route("/update", methods=["POST"])
 def update():
     try:
-        scraping("production")
+        scraping.scraping()
         logger.info("update start")
         return jsonify(status="success")
     except Exception as e:
