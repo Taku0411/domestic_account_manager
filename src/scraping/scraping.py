@@ -32,17 +32,10 @@ def scraping():
 
     options = Options()
     options.add_argument("--headless")
-    #options.add_argument("--disable-search-engine-choice-screen")
     options.add_argument(
         "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
-    options.add_experimental_option("detach", True)
 
-    service = webdriver.ChromeService()
-    if (len(sys.argv) != 1 and sys.argv[1] == "--production"):
-        service = webdriver.ChromeService(
-            executable_path="/usr/bin/chromedriver")
-
-    driver = webdriver.Chrome(options=options, service=service)
+    driver = webdriver.Chrome(options=options)
 
     with open(toml_path, "rb") as f:
         data = tomllib.load(f)
