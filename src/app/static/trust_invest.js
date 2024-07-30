@@ -2,7 +2,6 @@ async function draw_trust_invest(isFirst) {
   var chartTotalTimeSeries = document.getElementById("chartTotalTimeSeries");
   const response = await fetch("/trust_invest");
   const data = await response.json();
-  console.log(data);
   var TotalTimeSeries = new Chart(chartTotalTimeSeries,
     {
       type: "line",
@@ -98,12 +97,12 @@ async function draw_trust_invest(isFirst) {
       const tmp = document.createElement("div");
       val = i_data["data"]["net_asset_value"].at(-1)
       num = formatNumber(val);
-      tmp.className = "w-full lg:w-1/2 pl-0 mt-6 lg:pl-2";
-      const html = `<p class="text-xl pb-3 flex items-center">
+      tmp.className = "w-full lg:w-1/2 pl-0 mt-6 lg:p-6 h-96";
+      const html = `<p class="text-xl pb-3 flex items-center h-1/4 lg:h-1/6">
               <i class="fas fa-magnifying-glass-chart mr-3"></i> ${i_data["invest_name"]}（${i_data["bank_name"]}）：${num}円 
             </p>
-            <div class="p-6 bg-white">
-              <canvas id="chartTimeSeries_${i}" width="400" height="170"></canvas> `
+            <div class="p-3 bg-white h-3/4 lg:h-5/6">
+              <canvas id="chartTimeSeries_${i}"></canvas> `
       tmp.innerHTML = html;
       container.appendChild(tmp);
     }
@@ -149,6 +148,8 @@ async function draw_trust_invest(isFirst) {
         ]
       },
       options: {
+        respons: true,
+        maintainAspectRatio: false,
         scales: {
           xAxes: [{
             type: "time",

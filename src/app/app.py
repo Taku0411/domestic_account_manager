@@ -1,4 +1,4 @@
-from scraping import main
+from scraping import scraping 
 from flask import Flask, render_template, jsonify
 
 from pathlib import Path
@@ -152,6 +152,7 @@ def get_trust_invest():
         result["total"]["gain_loss"].append(gain_loss)
         result["total"]["gain_loss_percentage"].append(gain_loss_percentage)
 
+    # 口座のループ
     for account in trust_invest_list:
         invest_id = account[0]
         invest_name = account[1]
@@ -166,7 +167,16 @@ def get_trust_invest():
         result[f"{invest_id}"]["data"]["net_asset_value"] = []
         result[f"{invest_id}"]["data"]["gain_loss"] = []
         result[f"{invest_id}"]["data"]["gain_loss_percentage"] = []
-        for i in cursor.fetchall():
+
+        fetched = cursor.fetchall()
+        for i in range(len(result["date"]) - len(fetched)):
+            result[f"{invest_id}"]["data"]["invested_amount"].append(0)
+            result[f"{invest_id}"]["data"]["net_asset_value"].append(0)
+            result[f"{invest_id}"]["data"]["gain_loss"].append(0)
+            result[f"{invest_id}"]["data"]["gain_loss_percentage"].append(0.0)
+
+        for i in fetched:
+            # 投資額を計算
             amount = i[2] - i[3]
             result[f"{invest_id}"]["data"]["invested_amount"].append(amount)
             result[f"{invest_id}"]["data"]["net_asset_value"].append(i[2])
@@ -180,7 +190,7 @@ def get_trust_invest():
 @app.route("/update", methods=["POST"])
 def update():
     try:
-        main("production")
+        scraping("production")
         logger.info("update start")
         return jsonify(status="success")
     except Exception as e:
