@@ -35,22 +35,19 @@ def trust_invest():
 
 @app.route("/TotalPortfolio")
 def get_portfolio():
-    result = {}
-    result["labels"] = ["預金", "投資信託"]
-    result["value"] = []
     conn = sqlite3.connect(sqlite3_path)
     cursor = conn.cursor()
     cursor.execute("SELECT MAX(date) from cash_deposit_data;")
     cursor.execute(
         "SELECT SUM(balance) FROM cash_deposit_data WHERE date = ?;", cursor.fetchall()[0])
-    result["value"].append(cursor.fetchone()[0])
+    cash = cursor.fetchone()[0]
 
     cursor.execute("SELECT MAX(date) from trust_invest_data;")
     cursor.execute(
         "SELECT SUM(net_asset_value) from trust_invest_data WHERE date = ?", cursor.fetchall()[0])
-    result["value"].append(cursor.fetchone())
-
-    return jsonify(result)
+    invest = cursor.fetchone()[0]
+    res = [{"name": "現金資産", "y": cash}, {"name": "投資信託", "y": invest}]
+    return jsonify(res)
 
 
 @app.route("/TotalTimeSeries")

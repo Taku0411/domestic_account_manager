@@ -86,7 +86,7 @@
               <i class="fas fa-check mr-3"></i> ポートフォリオ
             </p>
             <div class="p-6 bg-white">
-              <canvas id="chartTotalPortfolio" width="400" height="170"></canvas>
+              <div id="chartTotalPortfolio" class="w-full h-64"></div>
             </div>
           </div>
           <div class="w-full lg:w-1/2 pl-0 lg:pl-2 mt-12 lg:mt-0">
@@ -94,7 +94,7 @@
               <i class="fas fa-check mr-3"></i> 総資産推移
             </p>
             <div class="p-6 bg-white">
-              <canvas id="chartTotalTimeSeries" width="400" height="170"></canvas>
+              <div id="chartTotalTimeSeries" class="w-full h-64"></div>
             </div>
           </div>
         </div>
@@ -106,7 +106,7 @@
               <i class="fas fa-cash-register mr-3"></i> 預金
             </p>
             <div class="p-6 bg-white">
-              <canvas id="chartTotalCashDeposit" width="400" height="170"></canvas>
+              <div id="chartTotalCashDeposit" class="w-full h-64"></div>
             </div>
           </div>
           <div class="w-full lg:w-1/2 pl-0 lg:pl-2 mt-12 lg:mt-0">
@@ -114,7 +114,7 @@
               <i class="fas fa-magnifying-glass-chart mr-3"></i> 投資信託
             </p>
             <div class="p-6 bg-white">
-              <canvas id="chartTotalTrustInvest" width="400" height="170"></canvas>
+              <div id="chartTotalTrustInvest" class="w-full h-64"></div>
             </div>
           </div>
         </div>
@@ -125,13 +125,10 @@
   <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
   <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/c0c602186b.js" crossorigin="anonymous"></script>
-  <!-- ChartJS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
-  <!-- ChartJS datatime formatter -->
-  <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
-  <!-- ChartJS pie formatter -->
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0 "></script>
+  <!-- highcharts -->
+  <script src="https://code.highcharts.com/highcharts.js">
+    <!-- ChartJS pie formatter -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0 "></script>
   <!-- my script -->
   <script src="/static/utils.js"></script>
   <script src="/static/index.js"></script>
