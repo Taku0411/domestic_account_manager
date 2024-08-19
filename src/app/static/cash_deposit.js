@@ -4,6 +4,13 @@ async function draw_cash_deposit(isFirst) {
   const response = await fetch("/cash_deposit")
   const data = await response.json()
 
+  // disable utc
+  Highcharts.setOptions({
+    global: {
+      useUTC: false
+    }
+  });
+
   const total = Highcharts.chart(chartTotalTimeSeries, {
     chart: {
       type: "area",
@@ -22,6 +29,10 @@ async function draw_cash_deposit(isFirst) {
     },
     credits: {
       enabled: false
+    },
+    legend:{
+      itemMarginBottom: -10,
+      itemMarginTop: 10
     },
     plotOptions: {
       area: {
@@ -42,7 +53,7 @@ async function draw_cash_deposit(isFirst) {
             <p class="text-xl pb-3 items-center">
               <i class="fas fa-magnifying-glass-chart mr-3"></i> ${i_data["account_name"]}（${i_data["account_type"]}）：${num}円 
             </p>
-            <div class="p-6 bg-white">
+            <div class="p-4 pb-0 bg-white">
               <div id="chartTimeSeries_${i}" class="h-64"></div>
             </div>`
     tmp.innerHTML = html;
@@ -80,7 +91,7 @@ async function draw_cash_deposit(isFirst) {
       },
       yAxis: {
         title: {
-          text: "yen"
+          text: "円"
         }
       },
       credits: {

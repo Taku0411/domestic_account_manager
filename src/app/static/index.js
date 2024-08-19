@@ -4,7 +4,9 @@ async function draw_index() {
   const data1 = await response1.json();
 
   Highcharts.chart(chartTotalPortfolio, {
-    chart: {type: "pie"},
+    chart: {
+      type: "pie",
+    },
     title: {text: ""},
     series: [
       {
@@ -53,7 +55,7 @@ async function draw_index() {
     },
     yAxis: {
       title: {
-        text: "yen"
+        text: "円"
       }
     },
     plotOptions: {
@@ -65,11 +67,14 @@ async function draw_index() {
     credits: {
       enabled: false
     },
+    legend: {
+      itemMarginBottom: -10
+    },
     series: [{
-      name: "aaa",
+      name: "預金",
       data: cash_deposit
     }, {
-      name: "bbb",
+      name: "投資信託",
       data: trust_invest
     }
     ]
@@ -90,7 +95,7 @@ async function draw_index() {
     },
     yAxis: {
       title: {
-        text: "yen"
+        text: "円"
       }
     },
     credits: {
@@ -116,7 +121,7 @@ async function draw_index() {
     },
     yAxis: {
       title: {
-        text: "yen"
+        text: "円"
       }
     },
     credits: {

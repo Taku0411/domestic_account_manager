@@ -1,197 +1,176 @@
-async function draw_trust_invest(isFirst) {
-  var chartTotalTimeSeries = document.getElementById("chartTotalTimeSeries");
+async function draw_trust_invest() {
+  const container = document.getElementById("segment");
+  const chartTotalTimeSeries = document.getElementById("chartTotalTimeSeries");
   const response = await fetch("/trust_invest");
   const data = await response.json();
-  var TotalTimeSeries = new Chart(chartTotalTimeSeries,
-    {
-      type: "line",
-      data: {
-        labels: data["date"],
-        datasets: [
-          // gain loss percentage
-          {
-            yAxisID: "y2",
-            fill: false,
-            label: "評価損益率",
-            data: data["total"]["gain_loss_percentage"],
-            lineTransition: 0,
-            borderColor: color_list[0][1],
-            backgroundColor: color_list[0][0]
-          },
-          // invested amount
-          {
-            yAxisID: "y1",
-            fill: "origin",
-            stack: 1,
-            label: "投資額",
-            data: data["total"]["invested_amount"],
-            lineTransition: 0,
-            borderColor: color_list[3][1],
-            backgroundColor: color_list[3][1],
-          },
-          // gain loss
-          {
-            yAxisID: "y1",
-            fill: "-1",
-            stack: 1,
-            label: "評価損益",
-            data: data["total"]["gain_loss"],
-            lineTransition: 0,
-            borderColor: color_list[2][1],
-            backgroundColor: color_list[2][1],
-          },
-        ]
-      },
-      options: {
-        respons: true,
-        maintainAspectRatio: false,
-        scales: {
-          xAxes: [{
-            type: "time",
-            time: {
-              unit: "day",
-              displayFormats: {
-                day: "YYYY/MM/DD"
-              }
-            },
-          }],
-          yAxes: [
-            {
-              id: "y1",
-              position: "left",
-              scaleLabel: {
-                display: true,
-                labelString: "円"
-              },
-              ticks: {
-                suggestedMin: 0,
-                callback: function (label, index, labels) {
-                  return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-                }
-              },
-              stacked: true,
-            },
-            {
-              id: "y2",
-              position: "right",
-              scaleLabel: {
-                display: true,
-                labelString: "%"
-              },
-            }
-          ]
-        },
-        plugins: {
-          filter: {
-            propagate: true
-          }
-        }
-      }
-    }
-  );
+  console.log(data);
 
-  if (isFirst) {
-    const container = document.getElementById("segment");
-    for (let i = 0; i < data["ndata"]; i++) {
-      const i_data = data[String(i)];
-      const tmp = document.createElement("div");
-      val = i_data["data"]["net_asset_value"].at(-1)
-      num = formatNumber(val);
-      tmp.className = "w-full lg:w-1/2 pl-0 mt-6 lg:p-6 h-96";
-      const html = `<p class="text-xl pb-3 flex items-center h-1/4 lg:h-1/6">
-              <i class="fas fa-magnifying-glass-chart mr-3"></i> ${i_data["invest_name"]}（${i_data["bank_name"]}）：${num}円 
-            </p>
-            <div class="p-3 bg-white h-3/4 lg:h-5/6">
-              <canvas id="chartTimeSeries_${i}"></canvas> `
-      tmp.innerHTML = html;
-      container.appendChild(tmp);
+  // disable utc
+  Highcharts.setOptions({
+    global: {
+      useUTC: false
     }
+  });
+
+  // for total data
+  total_data = [
+    [], [], []
+  ]
+  for (var i = 0; i < data["date"].length; i++) {
+    const date = Date.parse(data["date"][i])
+    total_data[0].push([date, data["total"]["invested_amount"][i]])
+    total_data[1].push([date, data["total"]["gain_loss"][i]])
+    total_data[2].push([date, data["total"]["gain_loss_percentage"][i]])
   }
 
-  for (let i = 0; i < Number(data["ndata"]); i++) {
-    var chart_i = document.getElementById("chartTimeSeries_" + String(i));
-    var chart = new Chart(chart_i, {
-      type: "line",
-      data:
-      {
-        labels: data["date"],
-        datasets: [
-          {
-            yAxisID: "y2",
-            fill: false,
-            label: "評価損益率",
-            data: data[String(i)]["data"]["gain_loss_percentage"],
-            lineTransition: 0,
-            borderColor: color_list[0][1],
-            backgroundColor: color_list[0][0]
-          },
-          {
-            yAxisID: "y1",
-            fill: "origin",
-            stack: 1,
-            label: "投資額",
-            data: data[String(i)]["data"]["invested_amount"],
-            lineTransition: 0,
-            borderColor: color_list[3][1],
-            backgroundColor: color_list[3][1],
-          },
-          {
-            yAxisID: "y1",
-            fill: "-1",
-            stack: 1,
-            label: "評価損益",
-            data: data[String(i)]["data"]["gain_loss"],
-            lineTransition: 0,
-            borderColor: color_list[2][1],
-            backgroundColor: color_list[2][1]
-          }
-        ]
+  // for each data
+  each_data = []
+  for (var i = 0; i < Number(data["ndata"]); i++) {
+    tmp = [
+      [], [], []
+    ]
+    for (var j = 0; j < data["date"].length; j++) {
+      const date = Date.parse(data["date"][j]);
+      tmp[0].push([date, data[String(i)]["data"]["invested_amount"][j]])
+      tmp[1].push([date, data[String(i)]["data"]["gain_loss"][j]])
+      tmp[2].push([date, data[String(i)]["data"]["gain_loss_percentage"][j]])
+    }
+    each_data.push(tmp)
+  }
+  console.log(each_data)
+
+  Highcharts.chart(chartTotalTimeSeries, {
+    chart: {
+      zooming: {
+        type: "x"
       },
-      options: {
-        respons: true,
-        maintainAspectRatio: false,
-        scales: {
-          xAxes: [{
-            type: "time",
-            time: {
-              unit: "day",
-              displayFormats: {
-                day: "YYYY/MM/DD"
-              }
-            },
-          }],
-          yAxes: [
-            {
-              id: "y1",
-              position: "left",
-              scaleLabel: {
-                display: true,
-                labelString: "円"
-              },
-              ticks: {
-                suggestedMin: 0,
-                callback: function (label, index, labels) {
-                  return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-                }
-              },
-              stacked: true,
-            },
-            {
-              id: "y2",
-              position: "right",
-              scaleLabel: {
-                display: true,
-                labelString: "%"
-              },
-            }
-          ]
-        },
-        plugins: {
-          filter: {
-            propagate: true
-          }
-        }
+    },
+    title: {text: ""},
+    xAxis: {
+      type: "datetime",
+    },
+    yAxis: [{
+      title: {
+        text: "円",
       }
+    }, {
+      title: {
+        text: "%"
+      },
+      opposite: true,
+    },
+    ],
+    credits: {
+      enabled: false
+    },
+    plotOptions: {
+      area: {
+        stacking: "normal",
+        lineWidth: 1
+      },
+    },
+    legend: {
+      itemMarginBottom: -10,
+      itemMarginTop: 10
+    },
+    series: [{
+      name: "評価損益",
+      type: "area",
+      data: total_data[1],
+      yAxis: 0
+    }, {
+      name: "投資額",
+      type: "area",
+      data: total_data[0],
+      yAxis: 0
+    }, {
+      name: "評価損益率",
+      type: "spline",
+      data: total_data[2],
+      yAxis: 1,
+      lineWidth: 3,
+      color: Highcharts.getOptions().colors[3],
+    },
+    ]
+  });
+
+  for (var i = 0; i < Number(data["ndata"]); i++) {
+
+    // time
+    for (var j = 0; j < data["date"].length; j++) {
+    }
+    const i_data = data[String(i)];
+    const tmp = document.createElement("div");
+    val = i_data["data"]["net_asset_value"].at(-1)
+    num = formatNumber(val);
+    tmp.className = "w-full lg:w-1/2 p-0 pb-3 lg:p-3";
+    const html = `
+            <p class="text-xl pb-3 items-center">
+              <i class="fas fa-magnifying-glass-chart mr-3"></i> ${i_data["invest_name"]}（${i_data["bank_name"]}）：${num}円 
+            </p>
+            <div class="p-4 pb-0 bg-white">
+              <div id="chartTimeSeries_${i}" class="h-64"></div>
+            </div>
+  `
+    tmp.innerHTML = html;
+    container.appendChild(tmp);
+  }
+
+  for (var i = 0; i < Number(data["ndata"]); i++) {
+    var chart_i = document.getElementById("chartTimeSeries_" + String(i));
+    Highcharts.chart(chart_i, {
+      chart: {
+        zooming: {
+          type: "x"
+        },
+      },
+      title: {text: ""},
+      xAxis: {
+        type: "datetime",
+      },
+      yAxis: [{
+        title: {
+          text: "円",
+        }
+      }, {
+        title: {
+          text: "%"
+        },
+        opposite: true,
+      },
+      ],
+      credits: {
+        enabled: false
+      },
+      plotOptions: {
+        area: {
+          stacking: "normal",
+          lineWidth: 1
+        },
+      },
+      legend: {
+        itemMarginBottom: -10,
+        itemMarginTop: 10
+      },
+      series: [{
+        name: "評価損益",
+        type: "area",
+        data: each_data[i][1],
+        yAxis: 0
+      }, {
+        name: "投資額",
+        type: "area",
+        data: each_data[i][0],
+        yAxis: 0
+      }, {
+        name: "評価損益率",
+        type: "spline",
+        data: each_data[i][2],
+        yAxis: 1,
+        lineWidth: 3,
+        color: Highcharts.getOptions().colors[3],
+      },
+      ]
     });
   }
 

@@ -75,22 +75,22 @@
     </header>
     <!-- chart -->
     <div class="w-full overflow-x-hidden border-t flex flex-col">
-      <main class="w-full flex-grow p-6">
+      <main class="w-full flex-grow p-3">
         <h1 class="text-3xl tex-black font-familiy-sans">投資信託</h1>
         <!-- 全資産 -->
-        <div class="flex flex-wrap mt-6">
-          <div class="w-full pl-0 lg:p-6 mt-12 lg:mt-0 items-center">
+        <div class="pt-6">
+          <div class="w-full lg:p-3 items-center">
             <p class="text-xl pb-3 max-h-10 flex items-center">
               <i class="fas fa-check mr-3"></i> 総計データ
             </p>
-            <div class="p-6 bg-white">
-              <canvas id="chartTotalTimeSeries" width="400" height="300"></canvas>
+            <div class="p-3 pb-0 bg-white">
+              <div id="chartTotalTimeSeries" class="w-full h-64"></div>
             </div>
           </div>
         </div>
 
         <!-- 各セグメント -->
-        <div id="segment" , class="flex flex-wrap mt-6">
+        <div id="segment" class="flex flex-wrap pt-3">
         </div>
       </main>
     </div>
@@ -99,17 +99,12 @@
   <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
   <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/c0c602186b.js" crossorigin="anonymous"></script>
-  <!-- ChartJS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
-  <!-- ChartJS datatime formatter -->
-  <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
-  <!-- ChartJS pie formatter -->
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0 "></script>
+  <!-- highcharts -->
+  <script src="https://code.highcharts.com/highcharts.js"></script>
   <!-- my script -->
   <script src="/static/utils.js"></script>
   <script src="/static/trust_invest.js"></script>
-  <script>draw_trust_invest(true)</script>
+  <script>draw_trust_invest()</script>
 
 </body>
 
