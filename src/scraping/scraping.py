@@ -69,7 +69,7 @@ def scraping():
         account.find_element(by=By.NAME, value="commit").click()
 
     # wait for updating
-    sleep_sec = 120
+    sleep_sec = 150
     logger.info(f"sleeping for {sleep_sec}sec")
     time.sleep(sleep_sec)
 
