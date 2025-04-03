@@ -1,4 +1,6 @@
 import sys
+import pyotp
+import os
 import time
 import tomllib
 from datetime import datetime
@@ -12,8 +14,8 @@ import send_line_notify
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
-import selenium_basics
 from pathlib import Path
 from logging import getLogger, DEBUG
 import logging
@@ -35,30 +37,46 @@ def scraping():
     options.add_argument(
         "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
 
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(options=options, service=Service("/usr/bin/chromedriver"))
 
-    with open(toml_path, "rb") as f:
-        data = tomllib.load(f)
+    # get
+    driver.get("https://moneyforward.com/me")
 
-    # login
-    logger.info("login startted")
-    login_actions_str = data["login_actions"]
-    login_actions = selenium_basics.actions(driver=driver)
-    for item in login_actions_str:
-        login_actions.do(item)
-        logger.info(f"{item}")
-    logger.info("login actions done")
+    # login button
+    elem = driver.find_element(by=By.XPATH, value="""//*[@id="new-before-login-home"]/div[1]/div[1]/p[1]/a""")
+    driver.execute_script("arguments[0].click();", elem)
+
+    # email
+    elem = driver.find_element(by=By.XPATH, value="""//*[@id="mfid_user[email]"]""")
+    driver.execute_script("arguments[0].value = arguments[1];", elem, os.environ["ENV_EMAIL"])
+    elem = driver.find_element(by=By.XPATH, value="""//*[@id="submitto"]""")
+    driver.execute_script("arguments[0].click();", elem)
+
+    # pass
+    elem = driver.find_element(by=By.XPATH, value="""//*[@id="mfid_user[password]"]""")
+    driver.execute_script("arguments[0].value = arguments[1];", elem, os.environ["ENV_PASS"])
+    elem = driver.find_element(by=By.XPATH, value="""//*[@id="submitto"]""")
+    driver.execute_script("arguments[0].click();", elem)
+
+    # otp
+    totp = pyotp.TOTP(os.environ["ENV_OTP"])
+    code = totp.now()
+    elem = driver.find_element(by=By.XPATH, value="""//*[@id="otp_attempt"]""")
+    driver.execute_script("arguments[0].value = arguments[1];", elem, code)
+    elem = driver.find_element(by=By.XPATH, value="""//*[@id="submitto"]""")
+    driver.execute_script("arguments[0].click();", elem)
 
     # try no thank you for passkey
     try:
-        driver.find_element(
-            by=By.XPATH, value="""/html/body/main/div/div/div[2]/div/s/ection/div/a""").click()
+        elem = driver.find_element(by=By.XPATH, value="""/html/body/main/div/div/div[2]/div/s/ection/div/a""")
+        driver.execute_script("arguments[0].click();", elem)
     except selenium.common.exceptions.NoSuchElementException:
         logger.info("skipped no thank you pass key")
         pass
     time.sleep(1)
-    driver.find_element(
-        by=By.XPATH, value="""//*[@id="header-container"]/header/div[2]/ul/li[5]/a""").click()
+    elem = driver.find_element(by=By.XPATH, value="""//*[@id="header-container"]/header/div[2]/ul/li[5]/a""")
+    driver.execute_script("arguments[0].click();", elem)
+
 
     # update accounts
     logger.info("update account info started")
@@ -66,7 +84,8 @@ def scraping():
         by=By.XPATH, value="""//*[@id="account-table"]""")
     account_element_list = table.find_elements(by=By.TAG_NAME, value="tr")[1:]
     for account in account_element_list:
-        account.find_element(by=By.NAME, value="commit").click()
+        elem = account.find_element(by=By.NAME, value="commit")
+        driver.execute_script("arguments[0].click();", elem)
 
     # wait for updating
     sleep_sec = 150
@@ -100,12 +119,12 @@ def scraping():
 
     # extract cash_deposit
     logger.info("extract account info started")
-    driver.find_element(
-        by=By.XPATH, value="""//*[@id="header-container"]/header/div[2]/ul/li[4]/a""").click()
+    elem = driver.find_element(by=By.XPATH, value="""//*[@id="header-container"]/header/div[2]/ul/li[4]/a""")
+    driver.execute_script("arguments[0].click();", elem)
 
-    cash_deposit_table = driver.find_element(
+    cash_deposit_table=driver.find_element(
         by=By.XPATH, value="""//*[@id="portfolio_det_depo"]/section/table/tbody""")
-    cash_deposit_list = cash_deposit_table.find_elements(
+    cash_deposit_list=cash_deposit_table.find_elements(
         by=By.TAG_NAME, value="tr")
 
     datetime_now = datetime.now()
