@@ -40,11 +40,7 @@ def scraping():
     driver = webdriver.Chrome(options=options, service=Service("/usr/bin/chromedriver"))
 
     # get
-    driver.get("https://moneyforward.com/me")
-
-    # login button
-    elem = driver.find_element(by=By.XPATH, value="""//*[@id="new-before-login-home"]/div[1]/div[1]/p[1]/a""")
-    driver.execute_script("arguments[0].click();", elem)
+    driver.get("https://moneyforward.com/sign_in")
 
     # email
     elem = driver.find_element(by=By.XPATH, value="""//*[@id="mfid_user[email]"]""")
