@@ -19,6 +19,7 @@ async function draw_cash_deposit(isFirst) {
       },
     },
     title: {text: ""},
+    tooltip: {valueSuffix: "円"},
     xAxis: {
       type: "datetime",
     },
@@ -86,6 +87,7 @@ async function draw_cash_deposit(isFirst) {
         }
       },
       title: {text: ""},
+      tooltip: {valueSuffix: "円"},
       xAxis: {
         type: "datetime"
       },

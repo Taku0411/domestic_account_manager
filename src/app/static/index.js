@@ -1,4 +1,9 @@
+const nf = new Intl.NumberFormat('en-US', {
+  signDisplay: 'always'
+});
+
 async function draw_index() {
+  // chartTotalPortfolio
   var chartTotalPortfolio = document.getElementById("chartTotalPortfolio")
   const response1 = await fetch("/TotalPortfolio");
   const data1 = await response1.json();
@@ -22,6 +27,11 @@ async function draw_index() {
     },
   });
 
+  var chartTotalPortfolioValue = document.getElementById("chartTotalPortfolioValue")
+  var sum = data1[0]["y"] + data1[1]["y"];
+  chartTotalPortfolioValue.innerHTML = `${sum.toLocaleString()}円`
+
+  // chartTotal
   var chartTotalTimeSeries = document.getElementById("chartTotalTimeSeries")
   const response2 = await fetch("/TotalTimeSeries")
   const data2 = await response2.json()
@@ -50,6 +60,7 @@ async function draw_index() {
       }
     },
     title: {text: ""},
+    tooltip: {valueSuffix: "円"},
     xAxis: {
       type: "datetime"
     },
@@ -79,8 +90,8 @@ async function draw_index() {
     }
     ]
   });
-  console.log(data2)
 
+  // chartTotalCashDeposit
   var chartTotalCashDeposit = document.getElementById("chartTotalCashDeposit")
   Highcharts.chart(chartTotalCashDeposit, {
     chart: {
@@ -90,6 +101,7 @@ async function draw_index() {
       }
     },
     title: {text: ""},
+    tooltip: {valueSuffix: "円"},
     xAxis: {
       type: "datetime"
     },
@@ -106,7 +118,12 @@ async function draw_index() {
       data: cash_deposit
     },]
   });
+  var chartTotalCashDepositValue = document.getElementById("chartTotalCashDepositValue")
+  var val = data2["value"]["cash_deposit"].slice(-1)[0];
+  var val2 = data2["value"]["cash_deposit"].slice(-2)[0];
+  chartTotalCashDepositValue.innerHTML = `${val.toLocaleString()}円 (前日比${nf.format(val -val2)})`
 
+  // totalTrustInvest
   var chartTotalTrustInvest = document.getElementById("chartTotalTrustInvest")
   Highcharts.chart(chartTotalTrustInvest, {
     chart: {
@@ -116,6 +133,7 @@ async function draw_index() {
       }
     },
     title: {text: ""},
+    tooltip: {valueSuffix: "円"},
     xAxis: {
       type: "datetime"
     },
@@ -133,4 +151,8 @@ async function draw_index() {
       data: trust_invest
     },]
   });
+  var chartTotalTrustInvestValue= document.getElementById("chartTotalTrustInvestValue")
+  var val = data2["value"]["trust_invest"].slice(-1)[0];
+  var val2 = data2["value"]["trust_invest"].slice(-2)[0];
+  chartTotalTrustInvestValue.innerHTML = `${val.toLocaleString()}円 (前日比${nf.format(val -val2)})`
 };
