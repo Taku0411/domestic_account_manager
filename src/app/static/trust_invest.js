@@ -46,6 +46,7 @@ async function draw_trust_invest() {
       },
     },
     title: {text: ""},
+    tooltip: {valueSuffix: "円"},
     xAxis: {
       type: "datetime",
     },
