@@ -2,7 +2,6 @@ import sys
 import pyotp
 import os
 import time
-import tomllib
 from datetime import datetime
 import shutil
 
@@ -19,6 +18,8 @@ from selenium import webdriver
 from pathlib import Path
 from logging import getLogger, DEBUG
 import logging
+
+gui = False
 logging.basicConfig(
     format="""%(asctime)s %(name)s:%(lineno)s %(funcName)s [%(levelname)s]: %(message)s""")
 logger = getLogger(__name__)
@@ -29,69 +30,69 @@ toml_path = root_path / "src" / "scraping" / "data.toml"
 sqlite3_path = root_path / "data" / "data.sqlite3"
 
 
-def scraping():
-    logger.info("scraping started")
-
-    options = Options()
-    options.add_argument("--headless")
-    options.add_argument(
-        "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
-
-    driver = webdriver.Chrome(options=options, service=Service("/usr/bin/chromedriver"))
-
-    # get
-    driver.get("https://moneyforward.com/sign_in")
-
+def login(driver):
     # email
-    elem = driver.find_element(by=By.XPATH, value="""//*[@id="mfid_user[email]"]""")
-    driver.execute_script("arguments[0].value = arguments[1];", elem, os.environ["ENV_EMAIL"])
-    elem = driver.find_element(by=By.XPATH, value="""//*[@id="submitto"]""")
+    elem = driver.find_element(
+        by=By.XPATH, value="""//*[@id="mfid_user[email]"]""")
+    driver.execute_script(
+        "arguments[0].value = arguments[1];", elem, os.environ["ENV_EMAIL"])
+    elem = driver.find_element(
+        by=By.XPATH, value="""//*[@id="submitto"]""")
     driver.execute_script("arguments[0].click();", elem)
+    logger.debug("input email done")
 
     # pass
-    elem = driver.find_element(by=By.XPATH, value="""//*[@id="mfid_user[password]"]""")
-    driver.execute_script("arguments[0].value = arguments[1];", elem, os.environ["ENV_PASS"])
-    elem = driver.find_element(by=By.XPATH, value="""//*[@id="submitto"]""")
+    elem = driver.find_element(
+        by=By.XPATH, value="""//*[@id="mfid_user[password]"]""")
+    driver.execute_script(
+        "arguments[0].value = arguments[1];", elem, os.environ["ENV_PASS"])
+    elem = driver.find_element(
+        by=By.XPATH, value="""//*[@id="submitto"]""")
     driver.execute_script("arguments[0].click();", elem)
+    logger.debug("input password done")
 
     # otp
     totp = pyotp.TOTP(os.environ["ENV_OTP"])
     code = totp.now()
-    elem = driver.find_element(by=By.XPATH, value="""//*[@id="otp_attempt"]""")
+    elem = driver.find_element(
+        by=By.XPATH, value="""//*[@id="otp_attempt"]""")
     driver.execute_script("arguments[0].value = arguments[1];", elem, code)
-    elem = driver.find_element(by=By.XPATH, value="""//*[@id="submitto"]""")
+    elem = driver.find_element(
+        by=By.XPATH, value="""//*[@id="submitto"]""")
     driver.execute_script("arguments[0].click();", elem)
+    logger.debug("input otp done")
 
     # try no thank you for passkey
     try:
-        elem = driver.find_element(by=By.XPATH, value="""/html/body/main/div/div/div[2]/div/s/ection/div/a""")
+        elem = driver.find_element(
+            by=By.XPATH, value="""/html/body/main/div/div/div[2]/div/s/ection/div/a""")
         driver.execute_script("arguments[0].click();", elem)
     except selenium.common.exceptions.NoSuchElementException:
         logger.info("skipped no thank you pass key")
         pass
     time.sleep(1)
-    elem = driver.find_element(by=By.XPATH, value="""//*[@id="header-container"]/header/div[2]/ul/li[5]/a""")
+    elem = driver.find_element(
+        by=By.XPATH, value="""//*[@id="header-container"]/header/div[2]/ul/li[5]/a""")
     driver.execute_script("arguments[0].click();", elem)
+    logger.info("login completed")
 
 
+def update_accounts(driver):
     # update accounts
-    logger.info("update account info started")
+    logger.info("start update account info")
     table = driver.find_element(
         by=By.XPATH, value="""//*[@id="account-table"]""")
-    account_element_list = table.find_elements(by=By.TAG_NAME, value="tr")[1:]
+    account_element_list = table.find_elements(
+        by=By.TAG_NAME, value="tr")[1:]
     for account in account_element_list:
         elem = account.find_element(by=By.NAME, value="commit")
         driver.execute_script("arguments[0].click();", elem)
-
-    # wait for updating
-    sleep_sec = 150
-    logger.info(f"sleeping for {sleep_sec}sec")
-    time.sleep(sleep_sec)
+        logger.debug(f"clicked {account.text}")
+    logger.debug(f"pressing update button completed")
 
     # check if update successfull
     account_element_list = driver.find_element(
         by=By.XPATH,  value="""//*[@id="account-table"]""").find_elements(by=By.TAG_NAME, value="tr")[1:]
-
     error_counter = 0
     for account in account_element_list:
         try:
@@ -103,6 +104,7 @@ def scraping():
         except selenium.common.exceptions.NoSuchElementException:
             logger.info("element not found")
             error_counter += 1
+    logger.info("all accounts successfully updated")
 
     # notify line
     now = datetime.now()
@@ -113,14 +115,18 @@ def scraping():
     if error_counter != 0:
         sys.exit(0)
 
+
+def extract_info(driver):
     # extract cash_deposit
     logger.info("extract account info started")
-    elem = driver.find_element(by=By.XPATH, value="""//*[@id="header-container"]/header/div[2]/ul/li[4]/a""")
+    elem = driver.find_element(
+        by=By.XPATH, value="""//*[@id="header-container"]/header/div[2]/ul/li[4]/a""")
     driver.execute_script("arguments[0].click();", elem)
+    time.sleep(10)
 
-    cash_deposit_table=driver.find_element(
+    cash_deposit_table = driver.find_element(
         by=By.XPATH, value="""//*[@id="portfolio_det_depo"]/section/table/tbody""")
-    cash_deposit_list=cash_deposit_table.find_elements(
+    cash_deposit_list = cash_deposit_table.find_elements(
         by=By.TAG_NAME, value="tr")
 
     datetime_now = datetime.now()
@@ -164,4 +170,28 @@ def scraping():
 
 
 if __name__ == "__main__":
-    scraping()
+    logger.info("scraping started")
+
+    options = Options()
+    if not gui:
+        options.add_argument("--headless")
+    options.add_argument(
+        "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
+
+    driver = webdriver.Chrome(
+        options=options, service=Service("/usr/bin/chromedriver"))
+    driver.get("https://moneyforward.com/sign_in")
+
+    # login and update
+    login(driver=driver)
+
+    # update account
+    update_accounts(driver)
+
+    # wait for 2m30sec
+    sleep_sec = 150
+    logger.info(f"sleeping for {sleep_sec}sec")
+    time.sleep(sleep_sec)
+
+    # extract
+    extract_info(driver)
