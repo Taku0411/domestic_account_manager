@@ -185,13 +185,13 @@ if __name__ == "__main__":
     # login and update
     login(driver=driver)
 
-    # update account
-    update_accounts(driver)
-
     # wait for 2m30sec
     sleep_sec = 150
     logger.info(f"sleeping for {sleep_sec}sec")
     time.sleep(sleep_sec)
+
+    # update account
+    update_accounts(driver)
 
     # extract
     extract_info(driver)
