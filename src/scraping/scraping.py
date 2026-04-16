@@ -20,6 +20,7 @@ from logging import getLogger, DEBUG
 import logging
 
 gui = False
+# gui = True
 logging.basicConfig(
     format="""%(asctime)s %(name)s:%(lineno)s %(funcName)s [%(levelname)s]: %(message)s""")
 logger = getLogger(__name__)
@@ -29,6 +30,13 @@ root_path = Path(__file__).parent.parent.parent
 toml_path = root_path / "src" / "scraping" / "data.toml"
 sqlite3_path = root_path / "data" / "data.sqlite3"
 
+def _screenshot(driver, name):
+    w = driver.execute_script("return document.body.scrollWidth;")
+    h = driver.execute_script("return document.body.scrollHeight;")
+    driver.set_window_size(w,h)
+
+    # Get Screen Shot
+    driver.save_screenshot(f"{name}.png")
 
 def login(driver):
     # email
@@ -90,6 +98,7 @@ def update_accounts(driver):
         logger.debug(f"clicked {account.text}")
     logger.debug(f"pressing update button completed")
 
+def check_account_status(driver):
     # check if update successfull
     account_element_list = driver.find_element(
         by=By.XPATH,  value="""//*[@id="account-table"]""").find_elements(by=By.TAG_NAME, value="tr")[1:]
@@ -185,13 +194,16 @@ if __name__ == "__main__":
     # login and update
     login(driver=driver)
 
+    # update account
+    update_accounts(driver)
+
     # wait for 2m30sec
     sleep_sec = 150
     logger.info(f"sleeping for {sleep_sec}sec")
     time.sleep(sleep_sec)
 
-    # update account
-    update_accounts(driver)
+    # check
+    check_account_status(driver)
 
-    # extract
+    # extract info
     extract_info(driver)
